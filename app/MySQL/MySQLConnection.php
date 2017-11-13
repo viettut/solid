@@ -10,8 +10,8 @@ class MySQLConnection implements DBConnectionInterface
 {
     const CREATE_TABLE_COMMAND = "CREATE TABLE IF NOT EXISTS %s(id MEDIUMINT NOT NULL AUTO_INCREMENT, domain VARCHAR (255) NOT NULL, hits INTEGER NOT NULL, unique_users INTEGER NOT NULL, PRIMARY KEY (id))";
 
-    const USERNAME = "tagcadedev";
-    const PASSWORD = "tagcadedev";
+    const USERNAME = "viettut";
+    const PASSWORD = "12345678";
     const HOST     = "localhost";
     const DB       = "solid";
 
@@ -41,6 +41,10 @@ class MySQLConnection implements DBConnectionInterface
         return self::$pdo;
     }
 
+    /**
+     * @param $tableName
+     * @throws \Exception
+     */
     public function createTable($tableName)
     {
         $db = self::getConnection();
@@ -51,7 +55,15 @@ class MySQLConnection implements DBConnectionInterface
         }
     }
 
-    public function update($tableName, array $data, $field, $value, $type = DBConnectionInterface::TYPE_STRING)
+    /**
+     * @param $tableName
+     * @param array $data
+     * @param $field
+     * @param $value
+     * @return bool
+     * @throws \Exception
+     */
+    public function update($tableName, array $data, $field, $value)
     {
         $db = self::getConnection();
         $columns = array_keys($data);
@@ -76,15 +88,23 @@ class MySQLConnection implements DBConnectionInterface
         }
     }
 
-    public function increaseFieldBy($tableName, $increasedField, $conditionField, $conditionValue, $type = DBConnectionInterface::TYPE_STRING)
+    /**
+     * @param $tableName
+     * @param $increasedField
+     * @param $conditionField
+     * @param $conditionValue
+     * @return bool
+     * @throws \Exception
+     */
+    public function increaseFieldBy($tableName, $increasedField, $conditionField, $conditionValue)
     {
         $db = self::getConnection();
-        if ($type == DBConnectionInterface::TYPE_STRING) {
-            $conditionValue = "'$conditionValue'";
-        }
-        $query = "UPDATE $tableName SET $increasedField = $increasedField + 1 WHERE $conditionField = $conditionValue";
+
+        $query = "UPDATE $tableName SET $increasedField = $increasedField + 1 WHERE $conditionField = :$conditionField";
         try {
             $stmt = $db->prepare($query);
+            $stmt->bindValue(":$conditionField", $conditionValue);
+
             // execute the update statement
             return $stmt->execute();
         } catch (\PDOException $ex) {
@@ -92,7 +112,12 @@ class MySQLConnection implements DBConnectionInterface
         }
     }
 
-
+    /**
+     * @param $tableName
+     * @param array $data
+     * @return string
+     * @throws \Exception
+     */
     public function insert($tableName, array $data)
     {
         $db = self::getConnection();
@@ -113,6 +138,12 @@ class MySQLConnection implements DBConnectionInterface
         }
     }
 
+    /**
+     * @param $tableName
+     * @param array $columns
+     * @return array
+     * @throws \Exception
+     */
     public function query($tableName, array $columns)
     {
         $db = self::getConnection();
@@ -130,12 +161,21 @@ class MySQLConnection implements DBConnectionInterface
         return $domains;
     }
 
-    public function getByField($tableName, $field, $value, $type = DBConnectionInterface::TYPE_STRING)
+    /**
+     * @param $tableName
+     * @param $field
+     * @param $value
+     * @return array
+     * @throws \Exception
+     */
+    public function getByField($tableName, $field, $value)
     {
         $db = self::getConnection();
-        $query = sprintf(self::GET_BY_DOMAIN_COMMAND, $tableName, $field, $value);
+        $query = sprintf(self::GET_BY_FIELD_COMMAND, $tableName, $field, ":$field");
         try {
-            $stmt = $db->query($query);
+            $stmt = $db->prepare($query);
+            $stmt->bindValue(":$field", $value);
+            $stmt->execute();
             return $stmt->fetchAll();
         } catch (\PDOException $ex) {
             throw $ex;

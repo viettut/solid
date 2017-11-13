@@ -12,8 +12,15 @@ class SQLiteConnection implements DBConnectionInterface
     const PATH_TO_SQLITE_FILE = 'db/phpsqlite.db';
     const CREATE_TABLE_COMMAND = "CREATE TABLE IF NOT EXISTS %s(id INTEGER PRIMARY KEY, domain VARCHAR (255) NOT NULL, hits INTEGER NOT NULL, unique_users INTEGER NOT NULL)";
 
+    /**
+     * @var SQLite3
+     */
     private static $db;
 
+    /**
+     * @return SQLite3
+     * @throws \Exception
+     */
     public static function getConnection()
     {
         if (self::$db == null) {
@@ -27,6 +34,10 @@ class SQLiteConnection implements DBConnectionInterface
         return self::$db;
     }
 
+    /**
+     * @param $tableName
+     * @throws \Exception
+     */
     public function createTable($tableName)
     {
         $db = self::getConnection();
@@ -37,11 +48,22 @@ class SQLiteConnection implements DBConnectionInterface
         }
     }
 
-    public function update($tableName, array $data, $field, $value, $type = self::TYPE_STRING)
+    /**
+     * @param $tableName
+     * @param array $data
+     * @param $field
+     * @param $value
+     */
+    public function update($tableName, array $data, $field, $value)
     {
         // TODO: Implement update() method.
     }
 
+    /**
+     * @param $tableName
+     * @param array $data
+     * @throws \Exception
+     */
     public function insert($tableName, array $data)
     {
         $db = self::getConnection();
@@ -69,12 +91,14 @@ class SQLiteConnection implements DBConnectionInterface
         // TODO: Implement query() method.
     }
 
-    public function getByField($tableName, $field, $value, $type = self::TYPE_STRING)
+    public function getByField($tableName, $field, $value)
     {
         $db = self::getConnection();
-        $query = sprintf(self::GET_BY_DOMAIN_COMMAND, $tableName, $field, $value);
+        $query = sprintf(self::GET_BY_FIELD_COMMAND, $tableName, $field, ":$field");
         try {
-            $result = $db->query($query);
+            $stmt = $db->prepare($query);
+            $stmt->bindValue(":$field", $value);
+            $result = $stmt->execute();
             $domains = [];
             while($row = $result->fetchArray(SQLITE3_ASSOC)) {
                 $domains[] = $row;
@@ -86,8 +110,19 @@ class SQLiteConnection implements DBConnectionInterface
         }
     }
 
-    public function increaseFieldBy($tableName, $increasedField, $conditionField, $conditionValue, $type = self::TYPE_STRING)
+    public function increaseFieldBy($tableName, $increasedField, $conditionField, $conditionValue)
     {
-        // TODO: Implement increaseFieldBy() method.
+        $db = self::getConnection();
+
+        $query = "UPDATE $tableName SET $increasedField = $increasedField + 1 WHERE $conditionField = :$conditionField";
+        try {
+            $stmt = $db->prepare($query);
+            $stmt->bindValue(":$conditionField", $conditionValue);
+
+            // execute the update statement
+            return $stmt->execute();
+        } catch (\PDOException $ex) {
+            throw $ex;
+        }
     }
 }

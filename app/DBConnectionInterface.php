@@ -13,24 +13,59 @@ interface DBConnectionInterface
     const DOMAIN_FIELD_NAME = 'domain';
     const HITS_FIELD_NAME = 'hits';
     const UNIQUE_USER_FIELD_NAME = 'unique_users';
-//    const CREATE_TABLE_COMMAND = "CREATE TABLE IF NOT EXISTS %s(id MEDIUMINT NOT NULL AUTO_INCREMENT, domain VARCHAR (255) NOT NULL, hits INTEGER NOT NULL, unique_users INTEGER NOT NULL, PRIMARY KEY (id))";
+    
     const QUERY_TABLE_COMMAND = "SELECT %s FROM %s";
-    const GET_BY_DOMAIN_COMMAND = 'SELECT * FROM %s WHERE %s = "%s"';
+    const GET_BY_FIELD_COMMAND = 'SELECT * FROM %s WHERE %s = %s';
     const INSERT_COMMAND = 'INSERT INTO %s (%s) VALUES (%s)';
+    
     /**
-     * @return \PDO
+     * @return \PDO|\SQLite3
      */
     public static function getConnection();
 
+    /**
+     * @param $tableName
+     * @return mixed
+     */
     public function createTable($tableName);
 
-    public function update($tableName, array $data, $field, $value, $type = self::TYPE_STRING);
+    /**
+     * @param $tableName
+     * @param array $data
+     * @param $field
+     * @param $value
+     * @return mixed
+     */
+    public function update($tableName, array $data, $field, $value);
 
+    /**
+     * @param $tableName
+     * @param array $data
+     * @return mixed
+     */
     public function insert($tableName, array $data);
 
+    /**
+     * @param $tableName
+     * @param array $columns
+     * @return mixed
+     */
     public function query($tableName, array $columns);
 
-    public function getByField($tableName, $field, $value, $type = self::TYPE_STRING);
+    /**
+     * @param $tableName
+     * @param $field
+     * @param $value
+     * @return mixed
+     */
+    public function getByField($tableName, $field, $value);
 
-    public function increaseFieldBy($tableName, $increasedField, $conditionField, $conditionValue, $type = self::TYPE_STRING);
+    /**
+     * @param $tableName
+     * @param $increasedField
+     * @param $conditionField
+     * @param $conditionValue
+     * @return mixed
+     */
+    public function increaseFieldBy($tableName, $increasedField, $conditionField, $conditionValue);
 }

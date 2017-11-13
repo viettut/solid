@@ -40,7 +40,6 @@ $domains = $dbManager->getAll();
 <body>
 <div class="container">
     <h2>Domain statistic</h2>
-    <p>The .table-bordered class adds borders to a table:</p>
     <table class="table table-bordered table-hover">
         <thead>
         <tr>
