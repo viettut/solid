@@ -8,6 +8,8 @@ use App\DBConnectionInterface;
 
 class MySQLConnection implements DBConnectionInterface
 {
+    const CREATE_TABLE_COMMAND = "CREATE TABLE IF NOT EXISTS %s(id MEDIUMINT NOT NULL AUTO_INCREMENT, domain VARCHAR (255) NOT NULL, hits INTEGER NOT NULL, unique_users INTEGER NOT NULL, PRIMARY KEY (id))";
+
     const USERNAME = "tagcadedev";
     const PASSWORD = "tagcadedev";
     const HOST     = "localhost";
@@ -32,7 +34,7 @@ class MySQLConnection implements DBConnectionInterface
             $db = self::DB;
             self::$pdo = new \PDO("mysql:dbname=$db;host=$host", $username, $password);
             if (self::$pdo == null) {
-                throw new \Exception('Can not connect to SQLite DB, check the configuration !');
+                throw new \Exception('Can not connect to MySQL, check the configuration !');
             }
         }
 
