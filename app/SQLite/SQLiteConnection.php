@@ -4,12 +4,12 @@
 namespace App\SQLite;
 
 
+use App\Config;
 use App\DBConnectionInterface;
 use SQLite3;
 
 class SQLiteConnection implements DBConnectionInterface
 {
-    const PATH_TO_SQLITE_FILE = 'db/phpsqlite.db';
     const CREATE_TABLE_COMMAND = "CREATE TABLE IF NOT EXISTS %s(id INTEGER PRIMARY KEY, domain VARCHAR (255) NOT NULL, hits INTEGER NOT NULL, unique_users INTEGER NOT NULL)";
 
     /**
@@ -24,7 +24,7 @@ class SQLiteConnection implements DBConnectionInterface
     public static function getConnection()
     {
         if (self::$db == null) {
-            self::$db = new SQLite3(self::PATH_TO_SQLITE_FILE);
+            self::$db = new SQLite3(Config::SQLITE3_DB_FILE);
 
             if (self::$db == null) {
                 throw new \Exception('Can not connect to SQLite DB, check the configuration !');

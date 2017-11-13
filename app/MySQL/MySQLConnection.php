@@ -4,16 +4,12 @@
 namespace App\MySQL;
 
 
+use App\Config;
 use App\DBConnectionInterface;
 
 class MySQLConnection implements DBConnectionInterface
 {
     const CREATE_TABLE_COMMAND = "CREATE TABLE IF NOT EXISTS %s(id MEDIUMINT NOT NULL AUTO_INCREMENT, domain VARCHAR (255) NOT NULL, hits INTEGER NOT NULL, unique_users INTEGER NOT NULL, PRIMARY KEY (id))";
-
-    const USERNAME = "viettut";
-    const PASSWORD = "12345678";
-    const HOST     = "localhost";
-    const DB       = "solid";
 
     /**
      * PDO instance
@@ -28,10 +24,10 @@ class MySQLConnection implements DBConnectionInterface
     public static function getConnection()
     {
         if (self::$pdo == null) {
-            $username = self::USERNAME;
-            $password = self::PASSWORD;
-            $host = self::HOST;
-            $db = self::DB;
+            $username = Config::MYSQL_USERNAME;
+            $password = Config::MYSQL_PASSWORD;
+            $host = Config::MYSQL_HOST;
+            $db = Config::MYSQL_DB;
             self::$pdo = new \PDO("mysql:dbname=$db;host=$host", $username, $password);
             if (self::$pdo == null) {
                 throw new \Exception('Can not connect to MySQL, check the configuration !');
