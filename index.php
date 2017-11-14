@@ -1,6 +1,6 @@
 <?php
 
-use App\DBConnectionInterface;
+use App\Config;
 use App\DBManager;
 use App\MySQL\MySQLConnection;
 
@@ -14,9 +14,9 @@ if ($dbManager->checkDomainExist($host)) {
     $dbManager->increaseHits($host);
 } else {
     $data = array(
-        DBConnectionInterface::DOMAIN_FIELD_NAME => $host,
-        DBConnectionInterface::HITS_FIELD_NAME => 1,
-        DBConnectionInterface::UNIQUE_USER_FIELD_NAME => 1
+        Config::DOMAIN_FIELD_NAME => $host,
+        Config::HITS_FIELD_NAME => 1,
+        Config::UNIQUE_USER_FIELD_NAME => 1
     );
 
     $dbManager->insertNewDomain($data);

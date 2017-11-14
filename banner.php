@@ -1,6 +1,6 @@
 <?php
 
-use App\DBConnectionInterface;
+use App\Config;
 use App\DBManager;
 use App\MySQL\MySQLConnection;
 require 'vendor/autoload.php';
@@ -12,7 +12,7 @@ $domains = $dbManager->getByDomain($host);
 $hit = 0;
 if (!empty($domains)) {
     $domain = $domains[0];
-    $hit = array_key_exists(DBConnectionInterface::HITS_FIELD_NAME, $domain) ? $domain[DBConnectionInterface::HITS_FIELD_NAME] : 0;
+    $hit = array_key_exists(Config::HITS_FIELD_NAME, $domain) ? $domain[Config::HITS_FIELD_NAME] : 0;
 }
 
 header ('Content-Type: image/png');

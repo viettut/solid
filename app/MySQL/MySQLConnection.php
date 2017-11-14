@@ -9,8 +9,6 @@ use App\DBConnectionInterface;
 
 class MySQLConnection implements DBConnectionInterface
 {
-    const CREATE_TABLE_COMMAND = "CREATE TABLE IF NOT EXISTS %s(id MEDIUMINT NOT NULL AUTO_INCREMENT, domain VARCHAR (255) NOT NULL, hits INTEGER NOT NULL, unique_users INTEGER NOT NULL, PRIMARY KEY (id))";
-
     /**
      * PDO instance
      * @var \PDO
@@ -45,7 +43,7 @@ class MySQLConnection implements DBConnectionInterface
     {
         $db = self::getConnection();
         try {
-            $db->exec(sprintf(self::CREATE_TABLE_COMMAND, $tableName));
+            $db->exec(sprintf(Config::MYSQL_CREATE_TABLE_COMMAND, $tableName));
         } catch (\PDOException $ex) {
             throw new \Exception('Can not create table, check the command syntax !');
         }
@@ -71,7 +69,7 @@ class MySQLConnection implements DBConnectionInterface
         }, $columns);
         $values = array_values($data);
         $params = array_combine($paramNames, $values);
-        $query = sprintf('UPDATE %s SET %s WHERE %s = %s', $tableName, implode(',', $updates), $field, $value);
+        $query = sprintf(Config::UPDATE_COMMAND, $tableName, implode(',', $updates), $field, $value);
         try {
             $stmt = $db->prepare($query);
             foreach ($params as $key => $value) {
@@ -124,7 +122,7 @@ class MySQLConnection implements DBConnectionInterface
 
         $values = array_values($data);
         $params = array_combine($paramNames, $values);
-        $query = sprintf(self::INSERT_COMMAND, $tableName, implode(',', $columns), implode(',', $paramNames));
+        $query = sprintf(Config::INSERT_COMMAND, $tableName, implode(',', $columns), implode(',', $paramNames));
         try {
             $stmt = $db->prepare($query);
             $stmt->execute($params);
@@ -143,7 +141,7 @@ class MySQLConnection implements DBConnectionInterface
     public function query($tableName, array $columns)
     {
         $db = self::getConnection();
-        $stmt = $db->query(sprintf(self::QUERY_TABLE_COMMAND, implode(',', $columns), $tableName));
+        $stmt = $db->query(sprintf(Config::QUERY_TABLE_COMMAND, implode(',', $columns), $tableName));
 
         $domains = [];
         while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
@@ -167,7 +165,7 @@ class MySQLConnection implements DBConnectionInterface
     public function getByField($tableName, $field, $value)
     {
         $db = self::getConnection();
-        $query = sprintf(self::GET_BY_FIELD_COMMAND, $tableName, $field, ":$field");
+        $query = sprintf(Config::GET_BY_FIELD_COMMAND, $tableName, $field, ":$field");
         try {
             $stmt = $db->prepare($query);
             $stmt->bindValue(":$field", $value);

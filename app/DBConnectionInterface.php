@@ -6,17 +6,14 @@ namespace App;
 
 interface DBConnectionInterface
 {
-    const TYPE_STRING = 1;
-    const TYPE_NUMBER = 2;
-
-    const DOMAIN_TABLE_NAME = 'domains';
-    const DOMAIN_FIELD_NAME = 'domain';
-    const HITS_FIELD_NAME = 'hits';
-    const UNIQUE_USER_FIELD_NAME = 'unique_users';
-    
-    const QUERY_TABLE_COMMAND = "SELECT %s FROM %s";
-    const GET_BY_FIELD_COMMAND = 'SELECT * FROM %s WHERE %s = %s';
-    const INSERT_COMMAND = 'INSERT INTO %s (%s) VALUES (%s)';
+//    const DOMAIN_TABLE_NAME = 'domains';
+//    const DOMAIN_FIELD_NAME = 'domain';
+//    const HITS_FIELD_NAME = 'hits';
+//    const UNIQUE_USER_FIELD_NAME = 'unique_users';
+//
+//    const QUERY_TABLE_COMMAND = "SELECT %s FROM %s";
+//    const GET_BY_FIELD_COMMAND = 'SELECT * FROM %s WHERE %s = %s';
+//    const INSERT_COMMAND = 'INSERT INTO %s (%s) VALUES (%s)';
     
     /**
      * @return \PDO|\SQLite3
